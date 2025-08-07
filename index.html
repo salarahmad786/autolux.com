@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>AutoLux - Premium Cars</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Mobile-first responsive design */
+        @media (max-width: 640px) {
+            html {
+                font-size: 14px;
+            }
+            
+            body {
+                overflow-x: hidden;
+            }
+        }
+        
+        /* Touch-friendly buttons */
+        button, .btn-primary {
+            min-height: 44px;
+            min-width: 44px;
+            touch-action: manipulation;
+        }
+        
+        /* Prevent zoom on input focus */
+        input, textarea, select {
+            font-size: 16px !important;
+        }
+        
+        /* Mobile-specific improvements */
+        @media (max-width: 640px) {
+            .hero-bg {
+                min-height: 100vh;
+                padding-top: 60px;
+            }
+            
+            .car-card:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .service-card:hover {
+                transform: translateY(-4px);
+            }
+            
+            /* Reduce animations on mobile for better performance */
+            .floating-element {
+                animation-duration: 8s;
+            }
+            
+            /* Better touch targets */
+            .cart-icon svg, .wishlist-icon svg {
+                width: 16px;
+                height: 16px;
+            }
+            
+            /* Mobile navigation improvements */
+            nav {
+                backdrop-filter: blur(20px);
+            }
+            
+            /* Better mobile spacing */
+            section {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+        }
+        
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            html {
+                font-size: 13px;
+            }
+            
+            .hero-bg h1 {
+                font-size: 2.5rem;
+                line-height: 1.1;
+            }
+            
+            .car-card {
+                margin-bottom: 1rem;
+            }
+        }
+        
+        /* Large phones and small tablets */
+        @media (min-width: 641px) and (max-width: 768px) {
+            .hero-bg h1 {
+                font-size: 3.5rem;
+            }
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .car-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        .car-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .success-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .success-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem;
+            border-radius: 2rem;
+            text-align: center;
+            color: white;
+            max-width: 500px;
+            margin: 2rem;
+            transform: scale(0.7) translateY(50px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .success-modal.show .success-content {
+            transform: scale(1) translateY(0);
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: checkmarkPulse 0.6s ease-out;
+        }
+        
+        @keyframes checkmarkPulse {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .checkmark svg {
+            width: 40px;
+            height: 40px;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmarkDraw 0.8s ease-out 0.3s forwards;
+        }
+        
+        @keyframes checkmarkDraw {
+            to { stroke-dashoffset: 0; }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            animation: confettiFall 3s linear infinite;
+        }
+        
+        .confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: #ff6b6b; }
+        .confetti:nth-child(2) { left: 20%; animation-delay: 0.2s; background: #4ecdc4; }
+        .confetti:nth-child(3) { left: 30%; animation-delay: 0.4s; background: #45b7d1; }
+        .confetti:nth-child(4) { left: 40%; animation-delay: 0.6s; background: #96ceb4; }
+        .confetti:nth-child(5) { left: 50%; animation-delay: 0.8s; background: #ffeaa7; }
+        .confetti:nth-child(6) { left: 60%; animation-delay: 1s; background: #dda0dd; }
+        .confetti:nth-child(7) { left: 70%; animation-delay: 1.2s; background: #98d8c8; }
+        .confetti:nth-child(8) { left: 80%; animation-delay: 1.4s; background: #f7dc6f; }
+        .confetti:nth-child(9) { left: 90%; animation-delay: 1.6s; background: #bb8fce; }
+        
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        .success-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            animation: titleBounce 0.6s ease-out 0.5s both;
+        }
+        
+        @keyframes titleBounce {
+            0% { transform: translateY(30px); opacity: 0; }
+            60% { transform: translateY(-10px); opacity: 1; }
+            100% { transform: translateY(0); }
+        }
+        
+        .success-message {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            animation: messageFade 0.6s ease-out 0.7s both;
+            opacity: 0;
+        }
+        
+        @keyframes messageFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cool Signup Modal Animations */
+        .signup-modal-content {
+            animation: signupModalEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes signupModalEntrance {
+            0% {
+                transform: scale(0.3) rotate(-10deg) translateY(100px);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(2deg) translateY(-20px);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1) rotate(0deg) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .signup-modal-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: signupShine 2s ease-in-out infinite;
+        }
+        
+        @keyframes signupShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+        
+        .signup-title {
+            animation: signupTitleBounce 0.8s ease-out 0.3s both;
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        
+        @keyframes signupTitleBounce {
+            0% { transform: translateY(30px) scale(0.8); opacity: 0; }
+            60% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        .signup-subtitle {
+            animation: signupSubtitleSlide 0.6s ease-out 0.5s both;
+            transform: translateX(-30px);
+            opacity: 0;
+        }
+        
+        @keyframes signupSubtitleSlide {
+            from { transform: translateX(-30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .signup-form-field {
+            animation: signupFieldPop 0.5s ease-out both;
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+        }
+        
+        .signup-form-field:nth-child(1) { animation-delay: 0.7s; }
+        .signup-form-field:nth-child(2) { animation-delay: 0.8s; }
+        .signup-form-field:nth-child(3) { animation-delay: 0.9s; }
+        .signup-form-field:nth-child(4) { animation-delay: 1.0s; }
+        
+        @keyframes signupFieldPop {
+            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+            70% { transform: scale(1.05) translateY(-5px); opacity: 0.8; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        
+        .signup-button {
+            animation: signupButtonGlow 0.6s ease-out 1.2s both;
+            transform: scale(0.9);
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes signupButtonGlow {
+            0% { transform: scale(0.9); opacity: 0; box-shadow: 0 0 0 rgba(102, 126, 234, 0); }
+            50% { transform: scale(1.05); opacity: 0.8; box-shadow: 0 0 30px rgba(102, 126, 234, 0.5); }
+            100% { transform: scale(1); opacity: 1; box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); }
+        }
+        
+        .signup-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .signup-button:hover::before {
+            left: 100%;
+        }
+        
+        .signup-footer {
+            animation: signupFooterFade 0.5s ease-out 1.4s both;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        
+        @keyframes signupFooterFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Floating particles for signup modal */
+        .signup-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .signup-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            animation: signupParticleFloat 3s ease-in-out infinite;
+        }
+        
+        .signup-particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+        .signup-particle:nth-child(2) { left: 80%; top: 30%; animation-delay: 0.5s; }
+        .signup-particle:nth-child(3) { left: 20%; top: 70%; animation-delay: 1s; }
+        .signup-particle:nth-child(4) { left: 70%; top: 80%; animation-delay: 1.5s; }
+        .signup-particle:nth-child(5) { left: 50%; top: 10%; animation-delay: 2s; }
+        .signup-particle:nth-child(6) { left: 90%; top: 60%; animation-delay: 2.5s; }
+        
+        @keyframes signupParticleFloat {
+            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+        }
+        
+        /* Welcome text animation */
+        .signup-welcome {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            animation: signupWelcome 0.8s ease-out 0.2s both;
+            opacity: 0;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        @keyframes signupWelcome {
+            0% { transform: translateX(-50%) translateY(20px) scale(0.8); opacity: 0; }
+            70% { transform: translateX(-50%) translateY(-10px) scale(1.1); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+        }
+        
+        .signup-welcome::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #667eea;
+        }
+        
+        /* Cart and Wishlist Styles */
+        .cart-icon, .wishlist-icon {
+            position: absolute;
+            top: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+        
+        @media (min-width: 640px) {
+            .cart-icon, .wishlist-icon {
+                top: 12px;
+                width: 44px;
+                height: 44px;
+                border-radius: 14px;
+            }
+        }
+        
+        .cart-icon {
+            right: 8px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9));
+        }
+        
+        .wishlist-icon {
+            right: 48px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 127, 0.9));
+        }
+        
+        @media (min-width: 640px) {
+            .cart-icon {
+                right: 12px;
+            }
+            
+            .wishlist-icon {
+                right: 64px;
+            }
+        }
+        
+        .cart-icon:hover {
+            transform: scale(1.15) rotate(5deg);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 1), rgba(16, 185, 129, 1));
+            box-shadow: 0 12px 30px rgba(34, 197, 94, 0.5);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .wishlist-icon:hover {
+            transform: scale(1.15) rotate(-5deg);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 1), rgba(220, 38, 127, 1));
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.5);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .wishlist-icon.active {
+            background: rgba(239, 68, 68, 1);
+            animation: heartBeat 0.6s ease-in-out;
+        }
+        
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .cart-notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            font-weight: 600;
+        }
+        
+        .cart-notification.show {
+            transform: translateX(0);
+        }
+        
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <div class="relative">
+                        <div class="absolute inset-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-xl pulse-ring"></div>
+                        <div class="relative w-10 h-10 sm:w-12 sm:h-12 morphing-bg rounded-xl flex items-center justify-center shadow-lg glow-pulse">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white wiggle" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black text-shimmer">AutoLux</h1>
+                        <p class="text-xs text-gray-500 font-medium hidden sm:block fade-in-up">PREMIUM MOTORS</p>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 p-2">
+                        <svg id="menuIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                        </svg>
+                        <svg id="closeIcon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Desktop menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Home</a>
+                    <a href="#cars" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Cars</a>
+                    <a href="#services" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Services</a>
+                    <a href="#contact" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Contact</a>
+                </div>
+                
+                <!-- Desktop auth buttons -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button onclick="showCart()" class="relative text-gray-700 hover:text-blue-600 font-medium transition-colors p-2 group">
+                        <svg class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        <span id="cartCounter" class="cart-counter hidden">0</span>
+                    </button>
+                    <button onclick="showWishlist()" class="relative text-gray-700 hover:text-red-600 font-medium transition-colors p-2">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        <span id="wishlistCounter" class="cart-counter hidden" style="background: #ef4444;">0</span>
+                    </button>
+                    <button onclick="showLoginModal()" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                        Login
+                    </button>
+                    <button onclick="showSignupModal()" class="btn-primary text-white px-6 py-2 rounded-lg font-semibold">
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobileMenu" class="md:hidden hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50">
+                <div class="px-4 py-6 space-y-4">
+                    <a href="#home" onclick="closeMobileMenu()" class="block text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">Home</a>
+                    <a href="#cars" onclick="closeMobileMenu()" class="block text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">Cars</a>
+                    <a href="#services" onclick="closeMobileMenu()" class="block text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">Services</a>
+                    <a href="#contact" onclick="closeMobileMenu()" class="block text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">Contact</a>
+                    <div class="pt-4 border-t border-gray-200 space-y-3">
+                        <div class="flex gap-4 mb-4">
+                            <button onclick="showCart(); closeMobileMenu();" class="flex-1 flex items-center justify-center gap-2 text-gray-700 hover:text-blue-600 font-medium transition-colors py-2 border border-gray-300 rounded-lg group">
+                                <svg class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                                Cart
+                            </button>
+                            <button onclick="showWishlist(); closeMobileMenu();" class="flex-1 flex items-center justify-center gap-2 text-gray-700 hover:text-red-600 font-medium transition-colors py-2 border border-gray-300 rounded-lg">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                Wishlist
+                            </button>
+                        </div>
+                        <button onclick="showLoginModal(); closeMobileMenu();" class="block w-full text-left text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
+                            Login
+                        </button>
+                        <button onclick="showSignupModal(); closeMobileMenu();" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold w-full">
+                            Sign Up
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg min-h-screen flex items-center justify-center text-white relative">
+        <div class="absolute inset-0 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Luxury Car Background" class="w-full h-full object-cover opacity-30">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
+            <div class="floating-element absolute top-20 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-xl"></div>
+            <div class="floating-element absolute top-40 right-20 w-32 h-32 bg-purple-500/20 rounded-full blur-xl" style="animation-delay: -2s;"></div>
+            <div class="floating-element absolute bottom-20 left-1/4 w-24 h-24 bg-pink-500/20 rounded-full blur-xl" style="animation-delay: -4s;"></div>
+        </div>
+        
+        <div class="text-center max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
+            <div class="glass-card rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-12 mb-6 sm:mb-8 bounce-in">
+                <h1 class="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black mb-3 sm:mb-4 md:mb-6 leading-tight">
+                    Drive Your <span class="text-shimmer">Dreams</span>
+                </h1>
+                <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 md:mb-8 text-gray-300 max-w-3xl mx-auto px-1 sm:px-2 fade-in-up leading-relaxed">
+                    Experience the pinnacle of automotive excellence with our curated collection of premium vehicles
+                </p>
+                <div class="flex flex-col gap-3 sm:gap-4 md:gap-6 justify-center max-w-sm sm:max-w-md md:max-w-none mx-auto">
+                    <button class="btn-primary text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-lg font-bold shadow-lg w-full md:w-auto glow-pulse zoom-in-out">
+                        Explore Collection
+                    </button>
+                    <button class="glass-card text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-lg font-bold hover:bg-white/20 transition-all w-full md:w-auto rotate-in">
+                        Book Test Drive
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Cars Section -->
+    <section id="cars" class="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-16 md:mb-20">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4 sm:mb-6">Featured <span class="gradient-text">Vehicles</span></h2>
+                <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">Discover our handpicked selection of luxury automobiles that define excellence</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+                <!-- Car 1 -->
+                <div class="car-card rounded-xl sm:rounded-2xl shadow-xl overflow-hidden slide-in-left car-hover-effect">
+                    <div class="h-44 sm:h-48 md:h-56 lg:h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Red Sports Car" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        
+                        <!-- Cart and Wishlist buttons -->
+                        <button onclick="addToCart('SportsCar Elite', 89999, 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')" class="cart-icon group">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        </button>
+                        
+                        <button onclick="toggleWishlist(this, 'SportsCar Elite')" class="wishlist-icon">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </button>
+                        
+                        <div class="absolute top-2 left-2 sm:top-4 sm:left-4 glass-card px-2 sm:px-3 py-1 rounded-full text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 bounce-in">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 wiggle" fill="currentColor" viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+                            Sports Car
+                        </div>
+                        <!-- Floating particles -->
+                        <div class="particle" style="left: 20%; animation-delay: 0s;"></div>
+                        <div class="particle" style="left: 60%; animation-delay: 2s;"></div>
+                        <div class="particle" style="left: 80%; animation-delay: 4s;"></div>
+                    </div>
+                    <div class="p-3 sm:p-4 md:p-6 lg:p-8">
+                        <div class="flex items-start justify-between mb-2 sm:mb-3 md:mb-4">
+                            <h3 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 leading-tight pr-2">SportsCar Elite</h3>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0">Available</span>
+                        </div>
+                        <p class="text-xs sm:text-sm md:text-base text-gray-600 mb-3 sm:mb-4 md:mb-6 leading-relaxed">High-performance luxury sports car with cutting-edge technology and unmatched driving dynamics</p>
+                        <div class="flex items-center justify-between mb-3 sm:mb-4 md:mb-6">
+                            <span class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black gradient-text">$89,999</span>
+                            <div class="flex text-yellow-400 space-x-0.5 sm:space-x-1">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                        </div>
+                        <button class="w-full btn-primary text-white py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-bold text-sm sm:text-base md:text-lg shadow-lg">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Car 2 -->
+                <div class="car-card rounded-2xl shadow-xl overflow-hidden fade-in-up car-hover-effect">
+                    <div class="h-48 sm:h-56 md:h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Luxury Sedan" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        
+                        <!-- Cart and Wishlist buttons -->
+                        <button onclick="addToCart('Luxury Sedan Pro', 65999, 'https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')" class="cart-icon group">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        </button>
+                        
+                        <button onclick="toggleWishlist(this, 'Luxury Sedan Pro')" class="wishlist-icon">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </button>
+                        
+                        <div class="absolute top-4 right-4 glass-card px-3 py-1 rounded-full text-white text-sm font-medium flex items-center gap-2 rotate-in" style="right: 110px;">
+                            <svg class="w-4 h-4 zoom-in-out" fill="currentColor" viewBox="0 0 24 24"><path d="M5 11l1.5-4.5h11L19 11H5zm2.5 5c.83 0 1.5-.67 1.5-1.5S8.33 13 7.5 13s-1.5.67-1.5 1.5S6.67 16 7.5 16zm9 0c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zm1.5 1H6v1c0 .55-.45 1-1 1H4c-.55 0-1-.45-1-1v-8l2.08-5.99C5.28 2.42 5.84 2 6.5 2h11c.66 0 1.22.42 1.42 1.01L21 9v8c0 .55-.45 1-1 1h-1c-.55 0-1-.45-1-1v-1z"/></svg>
+                            Luxury Sedan
+                        </div>
+                        <!-- Floating particles -->
+                        <div class="particle" style="left: 30%; animation-delay: 1s;"></div>
+                        <div class="particle" style="left: 70%; animation-delay: 3s;"></div>
+                    </div>
+                    <div class="p-4 sm:p-6 md:p-8">
+                        <div class="flex items-start sm:items-center justify-between mb-3 sm:mb-4">
+                            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 leading-tight">Luxury Sedan Pro</h3>
+                            <span class="bg-green-100 text-green-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap ml-2">Available</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">Executive sedan with premium comfort, advanced safety features, and sophisticated design</p>
+                        <div class="flex items-center justify-between mb-4 sm:mb-6">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-black gradient-text">$65,999</span>
+                            <div class="flex text-yellow-400 space-x-1">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                        </div>
+                        <button class="w-full btn-primary text-white py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg shadow-lg">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Car 3 -->
+                <div class="car-card rounded-2xl shadow-xl overflow-hidden slide-in-right car-hover-effect">
+                    <div class="h-48 sm:h-56 md:h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Electric SUV" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        
+                        <!-- Cart and Wishlist buttons -->
+                        <button onclick="addToCart('Electric SUV Max', 75999, 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')" class="cart-icon group">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        </button>
+                        
+                        <button onclick="toggleWishlist(this, 'Electric SUV Max')" class="wishlist-icon">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </button>
+                        
+                        <div class="absolute top-4 right-4 glass-card px-3 py-1 rounded-full text-white text-sm font-medium flex items-center gap-2 bounce-in" style="right: 110px;">
+                            <svg class="w-4 h-4 glow-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M14.69 2.21L4.33 11.49c-.64.58-.28 1.65.58 1.73L13 14l-4.85 6.76c-.22.31-.19.74.08 1.01.3.3.77.31 1.08.02L19.67 12.51c.64-.58.28-1.65-.58-1.73L11 10l4.85-6.76c.22-.31.19-.74-.08-1.01-.3-.3-.77-.31-1.08-.02z"/></svg>
+                            Electric SUV
+                        </div>
+                        <!-- Floating particles -->
+                        <div class="particle" style="left: 40%; animation-delay: 0.5s;"></div>
+                        <div class="particle" style="left: 75%; animation-delay: 2.5s;"></div>
+                        <div class="particle" style="left: 15%; animation-delay: 4.5s;"></div>
+                    </div>
+                    <div class="p-4 sm:p-6 md:p-8">
+                        <div class="flex items-start sm:items-center justify-between mb-3 sm:mb-4">
+                            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 leading-tight">Electric SUV Max</h3>
+                            <span class="bg-green-100 text-green-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap ml-2">Available</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">Eco-friendly electric SUV with 400+ mile range, fast charging, and innovative technology</p>
+                        <div class="flex items-center justify-between mb-4 sm:mb-6">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-black gradient-text">$75,999</span>
+                            <div class="flex text-yellow-400 space-x-1">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                        </div>
+                        <button class="w-full btn-primary text-white py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg shadow-lg">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-16 md:mb-20">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6">Premium <span class="gradient-text">Services</span></h2>
+                <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">Complete automotive solutions tailored to your luxury lifestyle</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+                <div class="service-card p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl text-center text-gray-900 slide-in-left">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 md:mb-6 glow-pulse">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white wiggle" fill="currentColor" viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+                    </div>
+                    <h3 class="text-base sm:text-lg md:text-xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">Premium Maintenance</h3>
+                    <p class="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed fade-in-up">Expert maintenance and repair services by certified technicians for your luxury vehicle</p>
+                </div>
+                
+                <div class="service-card p-6 sm:p-8 rounded-2xl text-center text-gray-900 fade-in-up">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 zoom-in-out">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white rotate-in" fill="currentColor" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 gradient-text">Luxury Financing</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed bounce-in">Flexible financing options with competitive rates and premium terms for luxury vehicles</p>
+                </div>
+                
+                <div class="service-card p-6 sm:p-8 rounded-2xl text-center text-gray-900 slide-in-right">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 pulse-ring">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white glow-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11.5C15.4,11.5 16,12.1 16,12.7V16.2C16,16.8 15.4,17.3 14.8,17.3H9.2C8.6,17.3 8,16.8 8,16.2V12.7C8,12.1 8.6,11.5 9.2,11.5V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,10V11.5H13.5V10C13.5,8.7 12.8,8.2 12,8.2Z"/></svg>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 gradient-text">Elite Insurance</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed fade-in-up">Comprehensive coverage plans and protection for your valuable luxury investment</p>
+                </div>
+                
+                <div class="service-card p-6 sm:p-8 rounded-2xl text-center text-gray-900 rotate-in">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 wiggle">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white zoom-in-out" fill="currentColor" viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 gradient-text">Premium Trade-In</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed bounce-in">Get maximum value and best deals for your current luxury vehicle trade-in</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-16 md:mb-20">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4 sm:mb-6">Get In <span class="gradient-text">Touch</span></h2>
+                <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">Ready to experience luxury? Contact our premium automotive specialists today</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-16">
+                <div class="space-y-4 sm:space-y-6 md:space-y-8">
+                    <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 md:mb-8">Contact Information</h3>
+                    
+                    <div class="flex items-start space-x-3 sm:space-x-4 md:space-x-6">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-base sm:text-lg md:text-xl font-bold text-gray-900">Showroom Address</h4>
+                            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">123 Luxury Auto Boulevard, Premium District, PD 12345</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start sm:items-center space-x-4 sm:space-x-6">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-lg sm:text-xl font-bold text-gray-900">Phone Number</h4>
+                            <p class="text-sm sm:text-base text-gray-600">(555) 123-LUXURY</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start sm:items-center space-x-4 sm:space-x-6">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-lg sm:text-xl font-bold text-gray-900">Email Address</h4>
+                            <p class="text-sm sm:text-base text-gray-600">premium@autolux.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10">
+                    <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 md:mb-8">Send Message</h3>
+                    <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 rounded-lg sm:rounded-xl mb-4 sm:mb-6 md:mb-8">
+                        <p class="font-medium flex items-start gap-2 text-xs sm:text-sm md:text-base"><svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Demo Form: This is a sample contact form for demonstration purposes.</p>
+                    </div>
+                    <form id="contactForm" class="space-y-3 sm:space-y-4 md:space-y-6">
+                        <div>
+                            <input type="text" id="fullName" name="fullName" placeholder="Your Full Name" required class="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base md:text-lg">
+                        </div>
+                        <div>
+                            <input type="email" id="email" name="email" placeholder="Your Email Address" required class="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base md:text-lg">
+                        </div>
+                        <div>
+                            <textarea rows="3" id="message" name="message" placeholder="Your Message" required class="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base md:text-lg resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full btn-primary text-white py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-bold text-sm sm:text-base md:text-lg shadow-lg">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 sm:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
+                <div class="col-span-1 sm:col-span-2 md:col-span-2">
+                    <div class="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
+                        <div class="relative">
+                            <div class="absolute inset-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-xl pulse-ring"></div>
+                            <div class="relative w-10 h-10 sm:w-12 sm:h-12 morphing-bg rounded-xl flex items-center justify-center glow-pulse">
+                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white wiggle" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-black text-shimmer">AutoLux</h1>
+                            <p class="text-xs sm:text-sm text-gray-400 font-medium fade-in-up">PREMIUM MOTORS</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-base sm:text-lg leading-relaxed max-w-md">Your trusted partner for premium automotive experiences. Defining luxury, performance, and excellence since 2024.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Quick Links</h4>
+                    <ul class="space-y-2 sm:space-y-3 text-gray-400">
+                        <li><a href="#home" class="hover:text-white transition-colors text-base sm:text-lg">Home</a></li>
+                        <li><a href="#cars" class="hover:text-white transition-colors text-base sm:text-lg">Cars</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors text-base sm:text-lg">Services</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors text-base sm:text-lg">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Follow Us</h4>
+                    <div class="flex space-x-3 sm:space-x-4">
+                        <button class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 hover:bg-blue-700 rounded-xl flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </button>
+                        <button class="w-10 h-10 sm:w-12 sm:h-12 bg-pink-600 hover:bg-pink-700 rounded-xl flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </button>
+                        <button class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-400 hover:bg-blue-500 rounded-xl flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center">
+                <p class="text-gray-400 text-base sm:text-lg">&copy; 2024 AutoLux Premium Motors. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 max-w-md w-full relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+            <div class="text-center mb-6 sm:mb-8">
+                <h2 class="text-2xl sm:text-3xl font-black gradient-text mb-2">Welcome Back</h2>
+                <p class="text-sm sm:text-base text-gray-600">Sign in to your AutoLux account</p>
+            </div>
+            <form id="loginForm" class="space-y-4 sm:space-y-6">
+                <div>
+                    <input type="email" id="loginEmail" placeholder="Email Address" required class="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg">
+                </div>
+                <div>
+                    <input type="password" id="loginPassword" placeholder="Password" required class="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg">
+                </div>
+                <button type="submit" class="w-full btn-primary text-white py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg shadow-lg">
+                    Sign In
+                </button>
+            </form>
+            <div class="text-center mt-4 sm:mt-6">
+                <p class="text-sm sm:text-base text-gray-600">Don't have an account? <button onclick="switchToSignup()" class="text-blue-600 font-semibold hover:underline">Sign up</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="success-modal">
+        <div class="success-content">
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            
+            <div class="checkmark">
+                <svg fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            
+            <h2 class="success-title">🎉 Thank You!</h2>
+            <p class="success-message">आपका message successfully भेज दिया गया है! हमारी team जल्दी ही आपसे contact करेगी।</p>
+            
+            <button onclick="closeSuccessModal()" class="bg-white text-purple-600 px-8 py-3 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors">
+                Perfect!
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart Notification -->
+    <div id="cartNotification" class="cart-notification">
+        <div class="flex items-center gap-3">
+            <svg class="w-6 h-6 animate-bounce" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span id="cartNotificationText">Item added to cart!</span>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeCartModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+            
+            <div class="text-center mb-6 sm:mb-8">
+                <h2 class="text-2xl sm:text-3xl font-black gradient-text mb-2 flex items-center justify-center gap-3">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                    Shopping Cart
+                </h2>
+                <p id="cartItemCount" class="text-sm sm:text-base text-gray-600">0 items in your cart</p>
+            </div>
+            
+            <div id="cartItems" class="space-y-4 mb-6">
+                <!-- Cart items will be populated here -->
+            </div>
+            
+            <div id="cartEmpty" class="text-center py-12 hidden">
+                <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                <h3 class="text-xl font-bold text-gray-500 mb-2">Your cart is empty</h3>
+                <p class="text-gray-400 mb-6">Add some luxury cars to get started!</p>
+                <button onclick="closeCartModal()" class="btn-primary text-white px-6 py-3 rounded-xl font-bold">
+                    Continue Shopping
+                </button>
+            </div>
+            
+            <div id="cartSummary" class="border-t pt-6 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xl font-bold">Total:</span>
+                    <span id="cartTotal" class="text-2xl font-black gradient-text">$0</span>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="clearCart()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold transition-colors">
+                        Clear Cart
+                    </button>
+                    <button onclick="proceedToCheckout()" class="flex-1 btn-primary text-white py-3 rounded-xl font-bold">
+                        Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div id="wishlistModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeWishlistModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+            
+            <div class="text-center mb-6 sm:mb-8">
+                <h2 class="text-2xl sm:text-3xl font-black gradient-text mb-2 flex items-center justify-center gap-3">
+                    <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    My Wishlist
+                </h2>
+                <p id="wishlistItemCount" class="text-sm sm:text-base text-gray-600">0 items in your wishlist</p>
+            </div>
+            
+            <div id="wishlistItems" class="space-y-4 mb-6">
+                <!-- Wishlist items will be populated here -->
+            </div>
+            
+            <div id="wishlistEmpty" class="text-center py-12 hidden">
+                <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <h3 class="text-xl font-bold text-gray-500 mb-2">Your wishlist is empty</h3>
+                <p class="text-gray-400 mb-6">Save your favorite cars for later!</p>
+                <button onclick="closeWishlistModal()" class="btn-primary text-white px-6 py-3 rounded-xl font-bold">
+                    Browse Cars
+                </button>
+            </div>
+            
+            <div id="wishlistActions" class="border-t pt-6 hidden">
+                <div class="flex gap-4">
+                    <button onclick="clearWishlist()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold transition-colors">
+                        Clear Wishlist
+                    </button>
+                    <button onclick="addAllToCart()" class="flex-1 btn-primary text-white py-3 rounded-xl font-bold">
+                        Add All to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="signup-modal-content bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 max-w-md w-full relative">
+            <!-- Welcome Badge -->
+            <div class="signup-welcome">
+                🎉 Welcome to AutoLux!
+            </div>
+            
+            <!-- Floating Particles -->
+            <div class="signup-particles">
+                <div class="signup-particle"></div>
+                <div class="signup-particle"></div>
+                <div class="signup-particle"></div>
+                <div class="signup-particle"></div>
+                <div class="signup-particle"></div>
+                <div class="signup-particle"></div>
+            </div>
+            
+            <button onclick="closeSignupModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+            
+            <div class="text-center mb-6 sm:mb-8 relative z-10">
+                <h2 class="signup-title text-2xl sm:text-3xl font-black gradient-text mb-2">Join AutoLux</h2>
+                <p class="signup-subtitle text-sm sm:text-base text-gray-600">Create your premium account</p>
+            </div>
+            
+            <form id="signupForm" class="space-y-4 sm:space-y-6 relative z-10">
+                <div class="signup-form-field">
+                    <input type="text" id="signupName" placeholder="Full Name" required class="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg transition-all duration-300 hover:shadow-lg">
+                </div>
+                <div class="signup-form-field">
+                    <input type="email" id="signupEmail" placeholder="Email Address" required class="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg transition-all duration-300 hover:shadow-lg">
+                </div>
+                <div class="signup-form-field">
+                    <input type="password" id="signupPassword" placeholder="Password" required class="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg transition-all duration-300 hover:shadow-lg">
+                </div>
+                <div class="signup-form-field">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required class="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg transition-all duration-300 hover:shadow-lg">
+                </div>
+                <button type="submit" class="signup-button w-full btn-primary text-white py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg shadow-lg">
+                    ✨ Create Account
+                </button>
+            </form>
+            
+            <div class="signup-footer text-center mt-4 sm:mt-6 relative z-10">
+                <p class="text-sm sm:text-base text-gray-600">Already have an account? <button onclick="switchToLogin()" class="text-blue-600 font-semibold hover:underline">Sign in</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const name = formData.get('fullName');
+            const email = formData.get('email');
+            const message = formData.get('message');
+            
+            // Validate form data
+            if (!name || !email || !message) {
+                alert('❌ कृपया सभी fields भरें!');
+                return;
+            }
+            
+            // Create proper mailto link with better formatting
+            const subject = 'AutoLux Contact Form - Message from ' + name;
+            const emailBody = `Hello AutoLux Team,
+
+New message from your website contact form:
+
+Name: ${name}
+Email: ${email}
+
+Message:
+${message}
+
+---
+Sent from AutoLux Website Contact Form`;
+            
+            // Create mailto link with proper encoding
+            const mailtoLink = `mailto:ahmadsalar4087@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+            
+            try {
+                // Try to open email client
+                const link = document.createElement('a');
+                link.href = mailtoLink;
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success animation
+                showSuccessModal();
+                
+                // Reset form after short delay
+                setTimeout(() => {
+                    this.reset();
+                }, 1000);
+                
+            } catch (error) {
+                // Fallback if mailto doesn't work
+                alert(`📧 Please send email manually to: ahmadsalar4087@gmail.com
+                
+Subject: ${subject}
+
+Message:
+${emailBody}`);
+                
+                // Still show success modal
+                showSuccessModal();
+                this.reset();
+            }
+        });
+
+        // Success modal functions
+        function showSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('show');
+            
+            // Auto close after 4 seconds
+            setTimeout(() => {
+                closeSuccessModal();
+            }, 4000);
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.remove('show');
+        }
+
+        // Modal functions
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        function showSignupModal() {
+            document.getElementById('signupModal').classList.remove('hidden');
+        }
+
+        function closeSignupModal() {
+            document.getElementById('signupModal').classList.add('hidden');
+        }
+
+        function switchToSignup() {
+            closeLoginModal();
+            showSignupModal();
+        }
+
+        function switchToLogin() {
+            closeSignupModal();
+            showLoginModal();
+        }
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Demo login - in real app, this would connect to backend
+            alert(`✅ Welcome back! Login successful for ${email}. In a real website, you would be logged into your AutoLux account.`);
+            closeLoginModal();
+        });
+
+        // Signup form submission
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('❌ Passwords do not match. Please try again.');
+                return;
+            }
+            
+            // Demo signup - in real app, this would connect to backend
+            alert(`🎉 Welcome to AutoLux, ${name}! Your account has been created successfully. In a real website, you would receive a confirmation email.`);
+            closeSignupModal();
+        });
+
+        // Close modals when clicking outside
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        document.getElementById('signupModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSignupModal();
+            }
+        });
+
+        document.getElementById('cartModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCartModal();
+            }
+        });
+
+        document.getElementById('wishlistModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeWishlistModal();
+            }
+        });
+
+        // Car detail buttons functionality
+        document.querySelectorAll('.car-card button').forEach(button => {
+            if (button.textContent.includes('View Details')) {
+                button.addEventListener('click', function() {
+                    const carName = this.closest('.car-card').querySelector('h3').textContent;
+                    alert(`🏎️ Viewing details for ${carName}. In a real website, this would open a detailed car page with specifications, 360° photos, and booking options.`);
+                });
+            }
+        });
+
+        // Get Quote and other buttons functionality
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Get Quote') || button.textContent.includes('Explore Collection') || button.textContent.includes('Book Test Drive')) {
+                button.addEventListener('click', function() {
+                    alert('🎯 Thank you for your interest in AutoLux! In a real website, this would open our premium quote system or luxury car browsing experience.');
+                });
+            }
+        });
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = document.getElementById('menuIcon');
+            const closeIcon = document.getElementById('closeIcon');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                menuIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = document.getElementById('menuIcon');
+            const closeIcon = document.getElementById('closeIcon');
+            
+            mobileMenu.classList.add('hidden');
+            menuIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+        }
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white/90');
+                nav.classList.remove('bg-white/80');
+            } else {
+                nav.classList.add('bg-white/80');
+                nav.classList.remove('bg-white/90');
+            }
+        });
+
+        // Cart and Wishlist functionality
+        let cart = [];
+        let wishlist = [];
+
+        function addToCart(name, price, image) {
+            const item = { name, price, image, id: Date.now() };
+            cart.push(item);
+            
+            // Update cart counter
+            updateCartCounter();
+            
+            // Show notification
+            showCartNotification(`${name} added to cart! 🛒`);
+        }
+
+        function toggleWishlist(button, name) {
+            const index = wishlist.findIndex(item => item.name === name);
+            
+            if (index === -1) {
+                // Add to wishlist - get car details from the card
+                const carCard = button.closest('.car-card');
+                const price = carCard.querySelector('.gradient-text').textContent.replace('$', '').replace(',', '');
+                const image = carCard.querySelector('img').src;
+                
+                wishlist.push({ 
+                    name, 
+                    price: parseInt(price), 
+                    image, 
+                    id: Date.now() 
+                });
+                button.classList.add('active');
+                showCartNotification(`${name} added to wishlist! ❤️`);
+            } else {
+                // Remove from wishlist
+                wishlist.splice(index, 1);
+                button.classList.remove('active');
+                showCartNotification(`${name} removed from wishlist! 💔`);
+            }
+            
+            // Update wishlist counter
+            updateWishlistCounter();
+        }
+
+        function updateCartCounter() {
+            const counter = document.getElementById('cartCounter');
+            if (cart.length > 0) {
+                counter.textContent = cart.length;
+                counter.classList.remove('hidden');
+            } else {
+                counter.classList.add('hidden');
+            }
+        }
+
+        function updateWishlistCounter() {
+            const counter = document.getElementById('wishlistCounter');
+            if (wishlist.length > 0) {
+                counter.textContent = wishlist.length;
+                counter.classList.remove('hidden');
+            } else {
+                counter.classList.add('hidden');
+            }
+        }
+
+        function showCartNotification(message) {
+            const notification = document.getElementById('cartNotification');
+            const text = document.getElementById('cartNotificationText');
+            
+            text.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function showCart() {
+            document.getElementById('cartModal').classList.remove('hidden');
+            updateCartDisplay();
+        }
+
+        function showWishlist() {
+            document.getElementById('wishlistModal').classList.remove('hidden');
+            updateWishlistDisplay();
+        }
+
+        function closeCartModal() {
+            document.getElementById('cartModal').classList.add('hidden');
+        }
+
+        function closeWishlistModal() {
+            document.getElementById('wishlistModal').classList.add('hidden');
+        }
+
+        function updateCartDisplay() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartEmpty = document.getElementById('cartEmpty');
+            const cartSummary = document.getElementById('cartSummary');
+            const cartItemCount = document.getElementById('cartItemCount');
+            const cartTotal = document.getElementById('cartTotal');
+
+            cartItemCount.textContent = `${cart.length} item${cart.length !== 1 ? 's' : ''} in your cart`;
+
+            if (cart.length === 0) {
+                cartEmpty.classList.remove('hidden');
+                cartSummary.classList.add('hidden');
+                cartItemsContainer.innerHTML = '';
+                return;
+            }
+
+            cartEmpty.classList.add('hidden');
+            cartSummary.classList.remove('hidden');
+
+            let total = 0;
+            cartItemsContainer.innerHTML = '';
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:shadow-lg transition-shadow';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg text-gray-900">${item.name}</h3>
+                        <p class="text-2xl font-black gradient-text">$${item.price.toLocaleString()}</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="moveToWishlist(${index})" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium">
+                            ❤️ Save for Later
+                        </button>
+                        <button onclick="removeFromCart(${index})" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium">
+                            🗑️ Remove
+                        </button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(itemElement);
+            });
+
+            cartTotal.textContent = `$${total.toLocaleString()}`;
+        }
+
+        function updateWishlistDisplay() {
+            const wishlistItemsContainer = document.getElementById('wishlistItems');
+            const wishlistEmpty = document.getElementById('wishlistEmpty');
+            const wishlistActions = document.getElementById('wishlistActions');
+            const wishlistItemCount = document.getElementById('wishlistItemCount');
+
+            wishlistItemCount.textContent = `${wishlist.length} item${wishlist.length !== 1 ? 's' : ''} in your wishlist`;
+
+            if (wishlist.length === 0) {
+                wishlistEmpty.classList.remove('hidden');
+                wishlistActions.classList.add('hidden');
+                wishlistItemsContainer.innerHTML = '';
+                return;
+            }
+
+            wishlistEmpty.classList.add('hidden');
+            wishlistActions.classList.remove('hidden');
+
+            wishlistItemsContainer.innerHTML = '';
+
+            wishlist.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:shadow-lg transition-shadow';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg text-gray-900">${item.name}</h3>
+                        <p class="text-2xl font-black gradient-text">$${item.price.toLocaleString()}</p>
+                        <p class="text-sm text-gray-500 mt-1">Added to wishlist</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="moveToCart(${index})" class="px-4 py-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium">
+                            🛒 Add to Cart
+                        </button>
+                        <button onclick="removeFromWishlist(${index})" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium">
+                            💔 Remove
+                        </button>
+                    </div>
+                `;
+                wishlistItemsContainer.appendChild(itemElement);
+            });
+        }
+
+        function removeFromCart(index) {
+            const removedItem = cart.splice(index, 1)[0];
+            updateCartCounter();
+            updateCartDisplay();
+            showCartNotification(`${removedItem.name} removed from cart! 🗑️`);
+        }
+
+        function removeFromWishlist(index) {
+            const removedItem = wishlist.splice(index, 1)[0];
+            updateWishlistCounter();
+            updateWishlistDisplay();
+            
+            // Update wishlist button state on the card
+            const wishlistButtons = document.querySelectorAll('.wishlist-icon');
+            wishlistButtons.forEach(button => {
+                const carCard = button.closest('.car-card');
+                const carName = carCard.querySelector('h3').textContent;
+                if (carName === removedItem.name) {
+                    button.classList.remove('active');
+                }
+            });
+            
+            showCartNotification(`${removedItem.name} removed from wishlist! 💔`);
+        }
+
+        function moveToCart(index) {
+            const item = wishlist.splice(index, 1)[0];
+            cart.push(item);
+            updateCartCounter();
+            updateWishlistCounter();
+            updateWishlistDisplay();
+            showCartNotification(`${item.name} moved to cart! 🛒`);
+        }
+
+        function moveToWishlist(index) {
+            const item = cart.splice(index, 1)[0];
+            
+            // Check if item already exists in wishlist
+            const existsInWishlist = wishlist.some(wishItem => wishItem.name === item.name);
+            if (!existsInWishlist) {
+                wishlist.push(item);
+                updateWishlistCounter();
+                
+                // Update wishlist button state on the card
+                const wishlistButtons = document.querySelectorAll('.wishlist-icon');
+                wishlistButtons.forEach(button => {
+                    const carCard = button.closest('.car-card');
+                    const carName = carCard.querySelector('h3').textContent;
+                    if (carName === item.name) {
+                        button.classList.add('active');
+                    }
+                });
+            }
+            
+            updateCartCounter();
+            updateCartDisplay();
+            showCartNotification(`${item.name} saved to wishlist! ❤️`);
+        }
+
+        function clearCart() {
+            if (cart.length === 0) return;
+            
+            if (confirm(`Are you sure you want to remove all ${cart.length} items from your cart?`)) {
+                cart = [];
+                updateCartCounter();
+                updateCartDisplay();
+                showCartNotification('Cart cleared! 🗑️');
+            }
+        }
+
+        function clearWishlist() {
+            if (wishlist.length === 0) return;
+            
+            if (confirm(`Are you sure you want to remove all ${wishlist.length} items from your wishlist?`)) {
+                // Update all wishlist button states
+                const wishlistButtons = document.querySelectorAll('.wishlist-icon');
+                wishlistButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+                
+                wishlist = [];
+                updateWishlistCounter();
+                updateWishlistDisplay();
+                showCartNotification('Wishlist cleared! 💔');
+            }
+        }
+
+        function addAllToCart() {
+            if (wishlist.length === 0) return;
+            
+            const itemsToAdd = [...wishlist];
+            itemsToAdd.forEach(item => {
+                // Check if item already exists in cart
+                const existsInCart = cart.some(cartItem => cartItem.name === item.name);
+                if (!existsInCart) {
+                    cart.push(item);
+                }
+            });
+            
+            updateCartCounter();
+            showCartNotification(`${itemsToAdd.length} items added to cart! 🛒`);
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) return;
+            
+            let total = 0;
+            cart.forEach(item => total += item.price);
+            
+            alert(`🎉 Proceeding to checkout!\n\n📦 ${cart.length} luxury cars\n💰 Total: $${total.toLocaleString()}\n\nIn a real website, you would be redirected to secure payment processing! 🔒`);
+            closeCartModal();
+        }
+
+        // Auto-open signup modal when website loads
+        window.addEventListener('load', function() {
+            // Wait 1 second after page loads, then show signup modal
+            setTimeout(() => {
+                showSignupModal();
+            }, 1000);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96b94a08f7817ff5',t:'MTc1NDU5NjA4Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
